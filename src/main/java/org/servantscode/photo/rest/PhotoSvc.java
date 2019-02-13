@@ -42,7 +42,7 @@ public class PhotoSvc extends SCServiceBase {
     }
 
     @POST
-    @Consumes({"image/jpg", "image/png", "image/gif"})
+    @Consumes({"image/jpg", "image/jpeg", "image/png", "image/gif"})
     @Produces(MediaType.APPLICATION_JSON)
     public Map<String, Object> storePhoto(@HeaderParam("Content-Type") String fileType,
                                           InputStream photoBypes) {
