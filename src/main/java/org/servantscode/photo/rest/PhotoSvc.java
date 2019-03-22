@@ -60,14 +60,14 @@ public class PhotoSvc extends SCServiceBase {
         return resp;
     }
 
-    @DELETE @Path("/{guid}") @Produces(MediaType.APPLICATION_JSON)
-    public Map<String, Object> deletePhoto(@PathParam("guid") String guid) {
+    @DELETE @Path("/{guid}")
+    public void deletePhoto(@PathParam("guid") String guid) {
         verifyUserAccess("photo.delete");
 
         if(isEmpty(guid))
             throw new NotFoundException();
 
-        db.deletePhoto(guid);
-        return Collections.singletonMap("success", true);
+        if(!db.deletePhoto(guid))
+            throw new NotFoundException();
     }
 }

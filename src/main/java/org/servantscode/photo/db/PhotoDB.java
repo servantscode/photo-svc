@@ -46,15 +46,12 @@ public class PhotoDB extends DBAccess {
         }
     }
 
-    public void deletePhoto(String guid) {
+    public boolean deletePhoto(String guid) {
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement("DELETE FROM photos WHERE guid=?")){
 
             stmt.setString(1, guid);
-
-            if(!(stmt.executeUpdate() > 0))
-                throw new RuntimeException("Could not delete photo.");
-
+            return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new RuntimeException("Could not delete photo.", e);
         }
