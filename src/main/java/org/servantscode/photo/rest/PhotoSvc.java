@@ -41,6 +41,18 @@ public class PhotoSvc extends SCServiceBase {
         return Response.ok(photo.getBytes(), photo.getFileType()).build();
     }
 
+    @GET @Path("/public/{guid}")
+    public Response getPublicPhoto(@PathParam("guid") String guid) {
+        if(isEmpty(guid))
+            throw new NotFoundException();
+
+        Photo photo = db.getPublicPhoto(guid);
+        if(photo == null)
+            throw new NotFoundException();
+
+        return Response.ok(photo.getBytes(), photo.getFileType()).build();
+    }
+
     @POST
     @Consumes({"image/jpg", "image/jpeg", "image/png", "image/gif"})
     @Produces(MediaType.APPLICATION_JSON)
@@ -52,7 +64,24 @@ public class PhotoSvc extends SCServiceBase {
             throw new NotAcceptableException();
 
         String guid = UUID.randomUUID().toString();
-        db.savePhoto(new Photo(guid, fileType, photoBypes));
+        db.savePhoto(new Photo(guid, fileType, photoBypes, false));
+
+        Map<String, Object> resp = new HashMap<>(2);
+        resp.put("success", true);
+        resp.put("guid", guid);
+        return resp;
+    }
+
+    @POST @Path("/public") @Consumes({"image/jpg", "image/jpeg", "image/png", "image/gif"}) @Produces(MediaType.APPLICATION_JSON)
+    public Map<String, Object> storePublicPhoto(@HeaderParam("Content-Type") String fileType,
+                                                InputStream photoBypes) {
+        verifyUserAccess("admin.photo.create");
+
+        if(isEmpty(fileType))
+            throw new NotAcceptableException();
+
+        String guid = UUID.randomUUID().toString();
+        db.savePhoto(new Photo(guid, fileType, photoBypes, true));
 
         Map<String, Object> resp = new HashMap<>(2);
         resp.put("success", true);
