@@ -18,6 +18,7 @@ public class DBUpgrade extends AbstractDBUpgrade {
             runSql("CREATE TABLE photos (guid TEXT PRIMARY KEY, " +
                                         "filetype TEXT, " +
                                         "bytes BYTEA, " +
+                                        "public BOOLEAN, " +
                                         "org_id INTEGER references organizations(id) ON DELETE CASCADE)");
         }
     }
